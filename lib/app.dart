@@ -1,8 +1,6 @@
 import 'package:derecho_en_perspectiva/cubits/cubit/login_cubit.dart';
-import 'package:derecho_en_perspectiva/pages/pages/home_page.dart';
 import 'package:derecho_en_perspectiva/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:derecho_en_perspectiva/pages/pages/sign_up_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyApp extends StatelessWidget {

@@ -1,6 +1,8 @@
+import 'package:derecho_en_perspectiva/pages/pages/articleListPage.dart';
 import 'package:derecho_en_perspectiva/pages/pages/home_page.dart';
 import 'package:go_router/go_router.dart';
 
+import '../models/articles.dart';
 import '../pages/pages/sign_up_page.dart';
 
 final GoRouter router = GoRouter(routes:[
@@ -14,6 +16,12 @@ final GoRouter router = GoRouter(routes:[
     path: '/sign-up',
     builder: (context, state) => SignUpPage(),
   ),
+
+  GoRoute(
+      name: 'articlesList',
+      path: '/articles',
+      builder: (context, state) => const ArticlesListPage(), // Route for the list of articles
+    ),
 ]);
 
 
