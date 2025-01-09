@@ -1,4 +1,5 @@
 import 'package:derecho_en_perspectiva/pages/pages/articleListPage.dart';
+import 'package:derecho_en_perspectiva/pages/pages/articlePage.dart';
 import 'package:derecho_en_perspectiva/pages/pages/home_page.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,6 +22,15 @@ final GoRouter router = GoRouter(routes:[
       name: 'articlesList',
       path: '/articles',
       builder: (context, state) => const ArticlesListPage(), // Route for the list of articles
+    ),
+
+  GoRoute(
+      name: 'article',
+      path: '/article',
+      builder: (context, state) {
+        final article = state.extra as Article; // Get the article passed via `state.extra`
+        return ArticlePage(article: article); // Pass article to ArticlePage
+      },
     ),
 ]);
 

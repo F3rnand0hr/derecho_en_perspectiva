@@ -61,7 +61,7 @@ Widget appDrawer(BuildContext context) {
           leading: const Icon(
             color: AppColors.coffee,
             Icons.add_business_rounded),
-         title: const Text('A B O U T  U S'),
+         title: const Text('C O N T Á C T E N O S'),
          onTap: (){
          },
         )

@@ -10,7 +10,7 @@ class ArticlesListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('List of Articles'),
+        title: const Text('Articles'),
         backgroundColor: Colors.white,
       ),
       backgroundColor: Colors.white,

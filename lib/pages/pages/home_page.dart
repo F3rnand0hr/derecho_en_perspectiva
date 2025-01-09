@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:derecho_en_perspectiva/models/articles.dart';
+import 'package:derecho_en_perspectiva/pages/pages/articleListPage.dart';
 import 'package:flutter/material.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/buildSectionItem.dart';
 import 'package:derecho_en_perspectiva/data_source/device_info/device_height.dart';
+import 'package:go_router/go_router.dart';
 
 class homePage extends StatefulWidget {
   const homePage({super.key});
@@ -78,6 +80,17 @@ class _homePageState extends State<homePage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
+                      'Bienvenid@s!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white70,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+
+                    Text(
                       'Derecho En Perspectiva',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -87,53 +100,97 @@ class _homePageState extends State<homePage> {
                         letterSpacing: 1.5,
                       ),
                     ),
-                    SizedBox(height: 30),
-                    Text(
-                      'The latest issue of our magazine is now available. Explore our featured articles and in-depth analysis on important legal matters.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white70,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(height: 40),
-                    // Call to Action: Go to the latest volume
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigate to the latest volume page
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.caputMortuum,
-                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: Text(
-                        'Contact Us',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
+                    
                   ],
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+              child: Container(
+                width: double.infinity, // Take up full width
+                height: 400,
+                padding: EdgeInsets.all(16), // Padding inside the box
+                margin: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.spaceCadet, // Set transparency using opacity
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                  // Header text inside transparent box
+                    SizedBox(
+                      height: 12,
+                    ),
+              // Body text inside transparent box
+                SizedBox(height: 30),
+                Text(
+                  'The latest issue of our magazine is now available. Explore our featured articles and in-depth analysis on important legal matters.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                  ),
+                ),
+                SizedBox(height: 10),
+                // Law Specialization Sections
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center, // Center the row
+                  children: [
+                    // Adjusted Icon for Business Law with larger size
+                    buildSectionItem('Business Law', Icons.business, AppColors.slateGray),
+                    SizedBox(width: 10), // Increased spacing between icons
+                    // Adjusted Icon for Criminal Law with larger size
+                    buildSectionItem('Criminal Law', Icons.gavel, AppColors.slateGray),
+                    SizedBox(width: 10), // Increased spacing between icons
+                    // Adjusted Icon for Family Law with larger size
+                    buildSectionItem('Family Law', Icons.family_restroom, AppColors.slateGray),
+                  ],
+                ),
+
+                SizedBox(height: 10),
+                // Call to Action: Go to the latest volume
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate to the latest volume page
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.caputMortuum,
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: Text(
+                    'Contáctenos',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+                        ],
+                        
+                      ),
+                      
+                    ),
+            ),
             // Additional page content (ListView, etc.) with a different background color
             Container(
-              color: AppColors.tan, // Background color for the content below the image
+              color: Colors.white, // Background color for the content below the image
+              height: deviceHeight(context),
               child: ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: 1, // Example count
                 itemBuilder: (context, index) {
                   return Container(
-                    height: 500,
+                    height: deviceHeight(context)*0.75,
                     margin: EdgeInsets.all(20),
                     padding: EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      color: AppColors.spaceCadet,
+                      color: AppColors.coffee,
                     ),
                     child: ListTile(
                       title: Text(
@@ -181,48 +238,56 @@ class _homePageState extends State<homePage> {
                       itemCount: articles.length, // Number of articles to display
                       itemBuilder: (context, index) {
                         final article = articles[index];
-                        return Container(
-                          margin: EdgeInsets.only(right: 20),
-                          width: 250,
-                          decoration: BoxDecoration(
-                            color: AppColors.slateGray,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Column(
-                            children: [
-                              // Placeholder image for each article
-                              Container(
-                                height: 150,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage(article.imageUrl), // Placeholder image
-                                    fit: BoxFit.cover,
-                                  ),
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Text(
-                                  article.title,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                        return InkWell(
+                          onTap: (){
+                            context.push(
+                              '/article',
+                              extra: article,
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(right: 20),
+                            width: 250,
+                            decoration: BoxDecoration(
+                              color: AppColors.slateGray,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Column(
+                              children: [
+                                // Placeholder image for each article
+                                Container(
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: AssetImage(article.imageUrl), // Placeholder image
+                                      fit: BoxFit.cover,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                child: Text(
-                                  article.description,
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 14,
+                                Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text(
+                                    article.title,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                  child: Text(
+                                    article.description,
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },

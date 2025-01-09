@@ -1,3 +1,4 @@
+import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:derecho_en_perspectiva/models/articles.dart'; // Import the articles model
@@ -15,6 +16,7 @@ class ArticlePage extends StatelessWidget {
         title: Text(article.title),
         backgroundColor: Colors.white,
       ),
+      drawer: appDrawer(context),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(

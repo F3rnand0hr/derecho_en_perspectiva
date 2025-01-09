@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "681708280089",
+    "project_id": "derecho-en-perspectiva",
+    "storage_bucket": "derecho-en-perspectiva.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681708280089:android:7b5a77036279b1d0338d88",
+        "android_client_info": {
+          "package_name": "com.example.derecho_en_perspectiva"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVIhnolr5nKsB3QL6xGyagXqdtxCPGIwk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
