@@ -1,10 +1,12 @@
 import 'package:derecho_en_perspectiva/pages/pages/articleListPage.dart';
 import 'package:derecho_en_perspectiva/pages/pages/articlePage.dart';
 import 'package:derecho_en_perspectiva/pages/pages/home_page.dart';
+import 'package:derecho_en_perspectiva/pages/pages/logInPage.dart';
+import 'package:derecho_en_perspectiva/pages/pages/userPage.dart';
 import 'package:go_router/go_router.dart';
 
 import '../models/articles.dart';
-import '../pages/pages/sign_up_page.dart';
+import '../pages/pages/signUpPage.dart';
 
 final GoRouter router = GoRouter(routes:[
   GoRoute(name: 'home',
@@ -18,28 +20,36 @@ final GoRouter router = GoRouter(routes:[
     builder: (context, state) => SignUpPage(),
   ),
 
-  GoRoute(
+    GoRoute(
       name: 'articlesList',
       path: '/articles',
-      builder: (context, state) => const ArticlesListPage(), // Route for the list of articles
+      builder: (context, state) => const ArticleListPage(),
     ),
 
-  GoRoute(
+
+    GoRoute(
       name: 'article',
-      path: '/article',
+      path: '/article/:articleId', // Accepts an articleId as a parameter
       builder: (context, state) {
-        final article = state.extra as Article; // Get the article passed via `state.extra`
-        return ArticlePage(article: article); // Pass article to ArticlePage
+        final articleId = state.pathParameters['articleId']!;
+        return ArticlePage(articleId: articleId);
       },
+  ),
+
+    GoRoute(
+      name: 'logInPage',
+      path: '/logInPage',
+      builder: (context, state) => LoginPage(),
     ),
+
+    GoRoute(
+      name: 'userPage',
+      path: '/userPage',
+      builder: (context, state) => UserPage(),
+    )
 ]);
 
 
 
 
 
-
-// BlocProvider(
-//   //   create: (context) => LoginCubit(),
-//   //   child: const SignUpPage(),
-//   // ),

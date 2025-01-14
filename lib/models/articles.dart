@@ -1,10 +1,12 @@
 class Article {
+  final String id;
   final String title;
   final String description;
   final String imageUrl;
   final String content; // Store the full content of the article
 
   Article({
+    required this.id,
     required this.title,
     required this.description,
     required this.imageUrl,
@@ -15,6 +17,7 @@ class Article {
 // Create a list of articles
 List<Article> articles = [
   Article(
+    id: 'business-law',
     title: 'Business Law',
     description: 'This article discusses the latest trends in Business Law.',
     imageUrl: 'assets/business_law.jpg',
@@ -24,6 +27,7 @@ List<Article> articles = [
                 This is the second page...''',
   ),
   Article(
+    id: 'criminal-law',
     title: 'Criminal Law',
     description: 'An in-depth analysis of the criminal law system.',
     imageUrl: 'assets/criminal_law.jpg',
