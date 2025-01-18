@@ -1,5 +1,7 @@
+import 'package:derecho_en_perspectiva/cubits/authCubit.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ThreadWidget extends StatefulWidget {
   final String articleId;   // ID of the parent article
@@ -147,6 +149,9 @@ class _ReplyInputState extends State<_ReplyInput> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthCubit>().state; // Get current user
+    final userId = user?.uid; // Use user.uid for unique user identifier
+    final userName = user?.displayName;
     return Row(
       children: [
         Expanded(
@@ -172,8 +177,8 @@ class _ReplyInputState extends State<_ReplyInput> {
                   try {
                     // Add a new doc in the current doc's "replies" subcollection
                     await widget.repliesCollection.add({
-                      'userId': 'someUserId',   // Replace with real user info
-                      'userName': 'SomeUser',
+                      'userId': userId,   // Replace with real user info
+                      'userName': userName,
                       'text': text,
                       'timestamp': FieldValue.serverTimestamp(),
                     });

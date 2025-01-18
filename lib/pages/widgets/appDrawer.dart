@@ -40,6 +40,18 @@ Widget appDrawer(BuildContext context) {
             context.push('/interviews'); // Navigate to interviews
           },
         ),
+
+        ListTile(
+          leading: const Icon(
+            Icons.pageview,
+            color: AppColors.coffee,
+          ),
+          title: const Text('R E V I S T A S'),
+          onTap: (){
+            
+          },
+        ),
+
         user == null
             ? ListTile(
                 leading: const Icon(
@@ -52,6 +64,7 @@ Widget appDrawer(BuildContext context) {
                   context.push('/sign-up'); // Navigate to sign-up page
                 },
               )
+
             : ListTile(
                 leading: const Icon(
                   Icons.person,
@@ -63,6 +76,18 @@ Widget appDrawer(BuildContext context) {
                   context.push('/userPage'); // Navigate to user dashboard
                 },
               ),
+        if(user == null )
+          ListTile(
+            leading: const Icon(
+              Icons.login,
+              color: AppColors.coffee,
+            ),
+            title: const Text('I N I C I A R  S E S I O N'),
+            onTap: (){
+              context.pop();
+              context.push('/logInPage');
+            },
+          ),
         ListTile(
           leading: const Icon(
             Icons.add_chart,

@@ -5,7 +5,6 @@ import 'package:derecho_en_perspectiva/pages/pages/logInPage.dart';
 import 'package:derecho_en_perspectiva/pages/pages/userPage.dart';
 import 'package:go_router/go_router.dart';
 
-import '../models/articles.dart';
 import '../pages/pages/signUpPage.dart';
 
 final GoRouter router = GoRouter(routes:[

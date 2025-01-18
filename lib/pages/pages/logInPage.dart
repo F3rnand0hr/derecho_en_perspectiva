@@ -1,5 +1,6 @@
 
 import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
+import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -34,11 +35,20 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: appDrawer(context),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text("Login"),
+        leading: Builder(
+        builder: (BuildContext context) {
+          return IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();  // This will now work
+            },
+          );
+        },
       ),
-      drawer: appDrawer(context),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -46,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Login",
+                "Iniciar sesión",
                 style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
               ),
               SizedBox(
@@ -54,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               FormContainerWidget(
                 controller: _emailController,
-                hintText: "Email",
+                hintText: "Correo electrónico",
                 isPasswordField: false,
               ),
               SizedBox(
@@ -62,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               FormContainerWidget(
                 controller: _passwordController,
-                hintText: "Password",
+                hintText: "Contraseña",
                 isPasswordField: true,
               ),
               SizedBox(
@@ -76,13 +86,13 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   height: 45,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: AppColors.spaceCadet,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
                     child: _isSigning ? CircularProgressIndicator(
                       color: Colors.white,) : Text(
-                      "Login",
+                      "Iniciar sesión",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -98,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account?"),
+                  Text("¿No tienes cuenta? ¡Crea una!"),
                   SizedBox(
                     width: 5,
                   ),
@@ -107,9 +117,9 @@ class _LoginPageState extends State<LoginPage> {
                       context.push('/sign-up');
                     },
                     child: Text(
-                      "Sign Up",
+                      "Crear cuenta",
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: AppColors.slateGray,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -138,10 +148,10 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (user != null) {
-      showToast(message: "User is successfully signed in");
+      showToast(message: "Usuario reconozido");
       context.push('/');
     } else {
-      showToast(message: "some error occured");
+      showToast(message: "ocurrió un error");
     }
   }
 

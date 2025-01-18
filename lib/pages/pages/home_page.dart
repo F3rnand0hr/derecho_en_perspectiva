@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'package:derecho_en_perspectiva/models/articles.dart';
-import 'package:derecho_en_perspectiva/pages/pages/articleListPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/buildSectionItem.dart';
 import 'package:derecho_en_perspectiva/data_source/device_info/device_height.dart';
+import 'package:derecho_en_perspectiva/cubits/authCubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class homePage extends StatefulWidget {
@@ -44,6 +45,7 @@ class _homePageState extends State<homePage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthCubit>().state;
     return Scaffold(
       extendBodyBehindAppBar: true, // Allows the body to extend behind the AppBar
       appBar: AppBar(
@@ -52,252 +54,275 @@ class _homePageState extends State<homePage> {
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
           IconButton(
-            icon: Icon(Icons.account_circle, color: Colors.white),
+            icon: Icon(Icons.account_circle),
             onPressed: () {
-              // Navigate to the Sign Up page
+              if (user != null){
+                context.push('/userPage');
+              }
+              else{
+                context.push('/sign-up');
+              }
             },
           ),
         ],
       ),
       drawer: appDrawer(context),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Section with image background, limited to a specific height for the latest volume
-            Container(
-              width: double.infinity,
-              height: deviceHeight(context), // Adjust this height to control the size of the image section
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/law_backround.jpeg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Bienvenid@s!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white70,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+                  .collection("articulos")
+                  .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-                    Text(
-                      'Derecho En Perspectiva',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                    
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-              child: Container(
-                width: double.infinity, // Take up full width
-                height: 400,
-                padding: EdgeInsets.all(16), // Padding inside the box
-                margin: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: AppColors.spaceCadet, // Set transparency using opacity
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                  // Header text inside transparent box
-                    SizedBox(
-                      height: 12,
-                    ),
-              // Body text inside transparent box
-                SizedBox(height: 30),
-                Text(
-                  'The latest issue of our magazine is now available. Explore our featured articles and in-depth analysis on important legal matters.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w400,
-                  ),
-                ),
-                SizedBox(height: 10),
-                // Law Specialization Sections
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center, // Center the row
-                  children: [
-                    // Adjusted Icon for Business Law with larger size
-                    buildSectionItem('Business Law', Icons.business, AppColors.slateGray),
-                    SizedBox(width: 10), // Increased spacing between icons
-                    // Adjusted Icon for Criminal Law with larger size
-                    buildSectionItem('Criminal Law', Icons.gavel, AppColors.slateGray),
-                    SizedBox(width: 10), // Increased spacing between icons
-                    // Adjusted Icon for Family Law with larger size
-                    buildSectionItem('Family Law', Icons.family_restroom, AppColors.slateGray),
-                  ],
-                ),
+          final articles = snapshot.data!.docs;
 
-                SizedBox(height: 10),
-                // Call to Action: Go to the latest volume
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to the latest volume page
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.caputMortuum,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+          if (articles.isEmpty) {
+            return const Center(
+              child: Text('No articles found.'),
+            );
+          }
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                // Section with image background, limited to a specific height for the latest volume
+                Container(
+                  width: double.infinity,
+                  height: deviceHeight(context), // Adjust this height to control the size of the image section
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/law_backround.jpeg'),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  child: Text(
-                    'Contáctenos',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
-                        ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Bienvenid@s!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white70,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+          
+                        Text(
+                          'Derecho En Perspectiva',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
                         
-                      ),
-                      
+                      ],
                     ),
-            ),
-            // Additional page content (ListView, etc.) with a different background color
-            Container(
-              color: Colors.white, // Background color for the content below the image
-              height: deviceHeight(context),
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: 1, // Example count
-                itemBuilder: (context, index) {
-                  return Container(
-                    height: deviceHeight(context)*0.75,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  child: Container(
+                    width: double.infinity, // Take up full width
+                    height: 400,
+                    padding: EdgeInsets.all(16), // Padding inside the box
                     margin: EdgeInsets.all(20),
-                    padding: EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      color: AppColors.coffee,
+                      color: AppColors.spaceCadet, // Set transparency using opacity
                     ),
-                    child: ListTile(
-                      title: Text(
-                        '¡Volumen mas reciente!',
-                        style: TextStyle(
-                          fontSize: 36,
-                          color: Colors.white,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                      // Header text inside transparent box
+                        SizedBox(
+                          height: 12,
                         ),
+                  // Body text inside transparent box
+                    SizedBox(height: 30),
+                    Text(
+                      'The latest issue of our magazine is now available. Explore our featured articles and in-depth analysis on important legal matters.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
                       ),
-                      subtitle: Text(
-                        'Description for item $index',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      onTap: () {
-                        // Item tap logic here
+                    ),
+                    SizedBox(height: 10),
+                    // Law Specialization Sections
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center, // Center the row
+                      children: [
+                        // Adjusted Icon for Business Law with larger size
+                        buildSectionItem('Business Law', Icons.business, AppColors.slateGray),
+                        SizedBox(width: 10), // Increased spacing between icons
+                        // Adjusted Icon for Criminal Law with larger size
+                        buildSectionItem('Criminal Law', Icons.gavel, AppColors.slateGray),
+                        SizedBox(width: 10), // Increased spacing between icons
+                        // Adjusted Icon for Family Law with larger size
+                        buildSectionItem('Family Law', Icons.family_restroom, AppColors.slateGray),
+                      ],
+                    ),
+          
+                    SizedBox(height: 10),
+                    // Call to Action: Go to the latest volume
+                    ElevatedButton(
+                      onPressed: () {
+                        // Navigate to the latest volume page
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.caputMortuum,
+                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: Text(
+                        'Contáctenos',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
                     ),
-                  );
-                },
-              ),
-            ),
-
-            
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Articulos Destacados',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  // PageView to display highlighted articles
-                  Container(
-                    height: 300, // Set a height for the article cards
-                    child: PageView.builder(
-                      controller: _pageController, // Use the controller for PageView
-                      itemCount: articles.length, // Number of articles to display
-                      itemBuilder: (context, index) {
-                        final article = articles[index];
-                        return InkWell(
-                          onTap: (){
-                            context.push(
-                              '/article',
-                              extra: article,
-                            );
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(right: 20),
-                            width: 250,
-                            decoration: BoxDecoration(
-                              color: AppColors.slateGray,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              children: [
-                                // Placeholder image for each article
-                                Container(
-                                  height: 150,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(article.imageUrl), // Placeholder image
-                                      fit: BoxFit.cover,
-                                    ),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(12.0),
-                                  child: Text(
-                                    article.title,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                  child: Text(
-                                    article.description,
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            ],
+                            
+                          ),
+                          
+                        ),
+                ),
+                // Additional page content (ListView, etc.) with a different background color
+                Container(
+                  color: Colors.white, // Background color for the content below the image
+                  height: deviceHeight(context),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: 1, // Example count
+                    itemBuilder: (context, index) {
+                      return Container(
+                        height: deviceHeight(context)*0.75,
+                        margin: EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: AppColors.coffee,
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            '¡Volumen mas reciente!',
+                            style: TextStyle(
+                              fontSize: 36,
+                              color: Colors.white,
                             ),
                           ),
-                        );
-                      },
-                    ),
+                          subtitle: Text(
+                            'Description for item $index',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          onTap: () {
+                            // Item tap logic here
+                          },
+                        ),
+                      );
+                    },
                   ),
-                ],
-              ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Articulos Destacados',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      // PageView to display highlighted articles
+                      SizedBox(
+                        height: 300, // Set a height for the article cards
+                        child: PageView.builder(
+                          controller: _pageController, // Use the controller for PageView
+                          itemCount: articles.length, // Number of articles to display
+                          itemBuilder: (context, index) {
+                            final doc = articles[index];
+                            final data = doc.data() as Map<String, dynamic>;
+                            final title = data['title'] ?? 'Untitled';
+                            final description = data['description'] ?? '';
+                            final imageURL = data['imageURL'] ?? '';
+                            return InkWell(
+                              onTap: (){
+                                context.go('/article/${doc.id}');
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(right: 20),
+                                width: 250,
+                                decoration: BoxDecoration(
+                                  color: AppColors.slateGray,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  children: [
+                                    // Placeholder image for each article
+                                    Container(
+                                      height: 150,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(imageURL), // Placeholder image
+                                          fit: BoxFit.cover,
+                                        ),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(12.0),
+                                      child: Text(
+                                        title,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                      child: Text(
+                                        description,
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        }
       ),
     );
   }

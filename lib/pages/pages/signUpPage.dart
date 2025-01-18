@@ -1,11 +1,11 @@
-import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:derecho_en_perspectiva/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
-import 'package:derecho_en_perspectiva/pages/pages/logInPage.dart';
-import 'package:derecho_en_perspectiva/pages/widgets/formContainerWidget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
 import 'package:derecho_en_perspectiva/styles/toast.dart';
+import 'package:derecho_en_perspectiva/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:derecho_en_perspectiva/pages/widgets/formContainerWidget.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -16,7 +16,6 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final FirebaseAuthService _auth = FirebaseAuthService();
-
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -35,9 +34,18 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text("SignUp"),
+      automaticallyImplyLeading: false,
+      leading: Builder(
+        builder: (BuildContext context) {
+          return IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();  // This will now work
+            },
+          );
+        },
       ),
+    ),
       drawer: appDrawer(context),
       body: Center(
         child: Padding(
@@ -45,78 +53,71 @@ class _SignUpPageState extends State<SignUpPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                "Sign Up",
+              const Text(
+                "Crear Cuenta",
                 style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               FormContainerWidget(
                 controller: _usernameController,
-                hintText: "Username",
+                hintText: "Nombre de usuario",
                 isPasswordField: false,
               ),
-              SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               FormContainerWidget(
                 controller: _emailController,
-                hintText: "Email",
+                hintText: "Correo electrónico",
                 isPasswordField: false,
               ),
-              SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               FormContainerWidget(
                 controller: _passwordController,
-                hintText: "Password",
+                hintText: "Contraseña",
                 isPasswordField: true,
               ),
-              SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               GestureDetector(
-                onTap:  (){
-                  _signUp();
-
-                },
+                onTap: _signUp,
                 child: Container(
                   width: double.infinity,
                   height: 45,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: AppColors.spaceCadet,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
-                      child: isSigningUp ? CircularProgressIndicator(color: Colors.white,):Text(
-                    "Sign Up",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  )),
+                    child: isSigningUp
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "Crear Cuenta",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
                 ),
               ),
-              SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Already have an account?"),
-                  SizedBox(
-                    width: 5,
-                  ),
+                  const Text("¿Ya tienes una cuenta?"),
+                  const SizedBox(width: 5),
                   GestureDetector(
-                      onTap: () {
-                        context.push('/logInPage');
-                      },
-                      child: Text(
-                        "Login",
-                        style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
-                      ))
+                    onTap: () {
+                      context.push('/logInPage');
+                    },
+                    child: const Text(
+                      "Iniciar sesión",
+                      style: TextStyle(
+                        color: AppColors.slateGray,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -125,25 +126,38 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _signUp() async {
+    setState(() {
+      isSigningUp = true;
+    });
 
-setState(() {
-  isSigningUp = true;
-});
+    final String username = _usernameController.text.trim();
+    final String email = _emailController.text.trim();
+    final String password = _passwordController.text.trim();
 
-    String username = _usernameController.text;
-    String email = _emailController.text;
-    String password = _passwordController.text;
+    if (username.isEmpty || email.isEmpty || password.isEmpty) {
+      showToast(message: "Por favor, llenar todos los cuadros");
+      setState(() {
+        isSigningUp = false;
+      });
+      return;
+    }
 
-    User? user = await _auth.signUpWithEmailAndPassword(email, password);
+    try {
+      User? user = await _auth.signUpWithEmailAndPassword(email, password);
 
-setState(() {
-  isSigningUp = false;
-});
-    if (user != null) {
-      showToast(message: "User is successfully created");
-      context.push('/');
-    } else {
-      showToast(message: "Some error happend");
+      if (user != null) {
+        await user.updateDisplayName(username);
+        await user.reload();
+
+        showToast(message: "Usuario creado");
+        context.go('/'); // Navigate to home page
+      }
+    } catch (e) {
+      showToast(message: "Error: $e");
+    } finally {
+      setState(() {
+        isSigningUp = false;
+      });
     }
   }
 }
