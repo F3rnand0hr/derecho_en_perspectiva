@@ -140,6 +140,7 @@ class _ArticlePageState extends State<ArticlePage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        _NewCommentInput(articleId: widget.articleId),
                         const SizedBox(height: 16),
                         StreamBuilder<QuerySnapshot>(
                           stream: FirebaseFirestore.instance
@@ -205,3 +206,61 @@ class _ArticlePageState extends State<ArticlePage> {
 }
 
 
+class _NewCommentInput extends StatefulWidget {
+  final String articleId;
+
+  const _NewCommentInput({Key? key, required this.articleId}) : super(key: key);
+
+  @override
+  State<_NewCommentInput> createState() => _NewCommentInputState();
+}
+
+class _NewCommentInputState extends State<_NewCommentInput> {
+  final TextEditingController _controller = TextEditingController();
+  bool _isPosting = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final user = context.watch<AuthCubit>().state; // Get current user
+    final userId = user?.uid;
+    final userName = user?.displayName;
+
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: _controller,
+            decoration: const InputDecoration(
+              hintText: 'Write a comment...',
+            ),
+          ),
+        ),
+        IconButton(
+          icon: _isPosting
+              ? const CircularProgressIndicator()
+              : const Icon(Icons.send),
+          onPressed: _isPosting || userId == null
+              ? null
+              : () async {
+                  if (_controller.text.trim().isEmpty) return;
+                  setState(() => _isPosting = true);
+
+                  await FirebaseFirestore.instance
+                      .collection('articulos')
+                      .doc(widget.articleId)
+                      .collection('comments')
+                      .add({
+                    'userId': userId,
+                    'userName': userName,
+                    'text': _controller.text.trim(),
+                    'timestamp': FieldValue.serverTimestamp(),
+                  });
+
+                  _controller.clear();
+                  setState(() => _isPosting = false);
+                },
+        ),
+      ],
+    );
+  }
+} 
