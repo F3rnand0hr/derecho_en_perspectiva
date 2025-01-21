@@ -86,7 +86,7 @@ class _homePageState extends State<homePage> {
           return SingleChildScrollView(
             child: Column(
               children: [
-                // Section with image background, limited to a specific height for the latest volume
+                // Section with image background
                 Container(
                   width: double.infinity,
                   height: deviceHeight(context), // Adjust this height to control the size of the image section
@@ -198,7 +198,6 @@ class _homePageState extends State<homePage> {
                           
                         ),
                 ),
-                // Additional page content (ListView, etc.) with a different background color
                 Container(
                   color: Colors.white, // Background color for the content below the image
                   height: deviceHeight(context),

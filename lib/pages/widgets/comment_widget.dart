@@ -1,7 +1,9 @@
+import 'package:derecho_en_perspectiva/cubits/authCubit.dart';
 import 'package:derecho_en_perspectiva/pages/pages/articleListPage.dart';
 import 'package:derecho_en_perspectiva/styles/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class CommentWidget extends StatefulWidget {
@@ -103,7 +105,7 @@ class RepliesList extends StatelessWidget {
     required this.commentId,
   }) : super(key: key);
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -182,9 +184,12 @@ class _NewReplyInputState extends State<_NewReplyInput> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthCubit>().state; 
+    final userId = user?.uid; 
+    final userName = user?.displayName; 
+
     return Row(
       children: [
-        // REPLY TEXT FIELD
         Expanded(
           child: TextField(
             controller: _replyController,
@@ -193,12 +198,11 @@ class _NewReplyInputState extends State<_NewReplyInput> {
             ),
           ),
         ),
-        // SEND BUTTON
         IconButton(
           icon: _isPosting
               ? const CircularProgressIndicator()
               : const Icon(Icons.send),
-          onPressed: _isPosting
+          onPressed: _isPosting || userId == null
               ? null
               : () async {
                   final text = _replyController.text.trim();
@@ -214,15 +218,17 @@ class _NewReplyInputState extends State<_NewReplyInput> {
                         .doc(widget.commentId)
                         .collection('replies')
                         .add({
-                      'userId': 'someUserId',   // Replace with real user ID
-                      'userName': 'SomeUser',   // Replace with real user name
+                      'userId': userId, 
+                      'userName': userName, 
                       'text': text,
                       'timestamp': FieldValue.serverTimestamp(),
                     });
                     _replyController.clear();
                   } catch (e) {
                     debugPrint('Error posting reply: $e');
-                    showToast(message: 'Crea tu cuenta o inicia sesion para escribir un comentario');
+                    showToast(
+                        message:
+                            'Create an account or log in to write a comment.');
                   }
 
                   setState(() => _isPosting = false);

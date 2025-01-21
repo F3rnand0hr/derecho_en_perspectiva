@@ -40,7 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
           return IconButton(
             icon: const Icon(Icons.menu),
             onPressed: () {
-              Scaffold.of(context).openDrawer();  // This will now work
+              Scaffold.of(context).openDrawer(); 
             },
           );
         },

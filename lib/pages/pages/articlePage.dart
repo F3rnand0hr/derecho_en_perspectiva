@@ -17,7 +17,7 @@ class ArticlePage extends StatefulWidget {
 }
 
 class _ArticlePageState extends State<ArticlePage> {
-  bool _commentsVisible = false; // Track whether comments are visible
+  bool _commentsVisible = false; 
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +84,7 @@ class _ArticlePageState extends State<ArticlePage> {
                         onPressed: userId == null
                             ? null
                             : () async {
+                                  // Remove user ID from the liked array
                                 if (liked.contains(userId)) {
                                   // Remove user ID from the liked array
                                   await FirebaseFirestore.instance
@@ -92,8 +93,9 @@ class _ArticlePageState extends State<ArticlePage> {
                                       .update({
                                     'liked': FieldValue.arrayRemove([userId]),
                                   });
-                                } else {
-                                  // Add user ID to the liked array
+                                } 
+                                // Add user ID to the liked array
+                                else {
                                   await FirebaseFirestore.instance
                                       .collection('articulos')
                                       .doc(widget.articleId)
@@ -221,7 +223,7 @@ class _NewCommentInputState extends State<_NewCommentInput> {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthCubit>().state; // Get current user
+    final user = context.watch<AuthCubit>().state; 
     final userId = user?.uid;
     final userName = user?.displayName;
 
