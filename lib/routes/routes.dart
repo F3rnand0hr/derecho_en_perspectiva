@@ -33,11 +33,8 @@ GoRouter(
 
     GoRoute(
       name: 'article',
-      path: '/article/:articleId', // Accepts an articleId as a parameter
-      builder: (context, state) {
-        final articleId = state.pathParameters['articleId']!;
-        return ArticlePage(articleId: articleId);
-      },
+      path: '/article/:articleId', 
+      builder: (context, state) => ArticlePage(articleId: state.pathParameters['articleId']!),
   ),
 
     GoRoute(

@@ -1,4 +1,5 @@
 import 'dart:html' as html;
+import 'package:derecho_en_perspectiva/data_source/device_info/device_height.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -49,6 +50,7 @@ class _SignUpPageState extends State<SignUpPage> {
     ),
       drawer: appDrawer(context),
       body: Center(
+        widthFactor: deviceWidth(context)*0.50,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(
@@ -80,7 +82,7 @@ class _SignUpPageState extends State<SignUpPage> {
               GestureDetector(
                 onTap: _signUp,
                 child: Container(
-                  width: double.infinity,
+                  width: deviceWidth(context)*0.70,
                   height: 45,
                   decoration: BoxDecoration(
                     color: AppColors.spaceCadet,
@@ -104,7 +106,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("¿Ya tienes una cuenta?"),
-                  const SizedBox(width: 5),
+                  SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
                       context.push('/logInPage');
@@ -152,7 +154,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
         showToast(message: "Usuario creado");
         html.window.location.reload();
-        // context.go('/'); // Navigate to home page
+        context.go('/'); // Navigate to home page
       }
     } catch (e) {
       showToast(message: "Error: $e");

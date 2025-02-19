@@ -53,7 +53,7 @@ class ArticleListPage extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   onTap: () {
-                    context.go('/article/${doc.id}');
+                    context.push('/article/${doc.id}');
                   },
                 ),
               );

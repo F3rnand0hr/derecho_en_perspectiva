@@ -1,4 +1,5 @@
 
+import 'package:derecho_en_perspectiva/data_source/device_info/device_height.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -50,6 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       ),
       body: Center(
+        widthFactor: deviceWidth(context)*0.50,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(
@@ -81,9 +83,11 @@ class _LoginPageState extends State<LoginPage> {
               GestureDetector(
                 onTap: () {
                   _signIn();
+                  showToast(message: "Usuario creado");
+                  context.go('/'); // Navigate to home page
                 },
                 child: Container(
-                  width: double.infinity,
+                  width: deviceWidth(context)*0.70,
                   height: 45,
                   decoration: BoxDecoration(
                     color: AppColors.spaceCadet,
@@ -110,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Text("¿No tienes cuenta? ¡Crea una!"),
                   SizedBox(
-                    width: 5,
+                    width: 5
                   ),
                   GestureDetector(
                     onTap: () {

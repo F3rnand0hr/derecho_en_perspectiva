@@ -1,3 +1,4 @@
+import 'package:derecho_en_perspectiva/data_source/device_info/device_height.dart';
 import 'package:flutter/material.dart';
 
 
@@ -40,7 +41,7 @@ class _FormContainerWidgetState extends State<FormContainerWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: deviceWidth(context)*0.70,
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Colors.grey.withOpacity(.35),

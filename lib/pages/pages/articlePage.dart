@@ -1,3 +1,4 @@
+import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,7 +26,6 @@ class _ArticlePageState extends State<ArticlePage> {
     final userId = user?.uid; // Use user.uid for unique user identifier
 
     return Scaffold(
-      drawer: appDrawer(context),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('articulos')
@@ -64,7 +64,6 @@ class _ArticlePageState extends State<ArticlePage> {
             appBar: AppBar(
               title: Text(title.isNotEmpty ? title : 'Article Detail'),
             ),
-            drawer: appDrawer(context),
             body: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -82,7 +81,7 @@ class _ArticlePageState extends State<ArticlePage> {
                               ? Icons.favorite
                               : Icons.favorite_border,
                           color:
-                              liked.contains(userId) ? Colors.red : Colors.grey,
+                              liked.contains(userId) ? Colors.red : AppColors.spaceCadet,
                         ),
                         onPressed: userId == null
                             ? null
@@ -115,7 +114,7 @@ class _ArticlePageState extends State<ArticlePage> {
                           _commentsVisible
                               ? Icons.chat_bubble
                               : Icons.chat_bubble_outline,
-                          color: Colors.grey,
+                          color: AppColors.spaceCadet,
                         ),
                         onPressed: () {
                           setState(() {
@@ -124,7 +123,7 @@ class _ArticlePageState extends State<ArticlePage> {
                         },
                       ),
                       IconButton(
-                      icon: const Icon(Icons.share, color: Colors.grey),
+                      icon: const Icon(Icons.share, color: AppColors.spaceCadet),
                       onPressed: () async {
                         final articleSnap = await FirebaseFirestore.instance
                             .collection('articulos')
@@ -234,6 +233,7 @@ class _NewCommentInputState extends State<_NewCommentInput> {
       children: [
         Expanded(
           child: TextField(
+            // style: TextStyle(color: AppColors.spaceCadet),
             controller: _controller,
             decoration: const InputDecoration(
               hintText: 'Write a comment...',

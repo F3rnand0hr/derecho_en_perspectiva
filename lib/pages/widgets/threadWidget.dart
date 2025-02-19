@@ -1,4 +1,5 @@
 import 'package:derecho_en_perspectiva/cubits/authCubit.dart';
+import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,7 +51,10 @@ class _ThreadWidgetState extends State<ThreadWidget> {
               children: [
                 Text(
                   widget.userName,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.spaceCadet
+                    ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -70,12 +74,18 @@ class _ThreadWidgetState extends State<ThreadWidget> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(AppColors.spaceCadet), // Set the text color here
+                ),
                 onPressed: () {
                   setState(() {
                     _showReplyField = !_showReplyField;
                   });
                 },
-                child: const Text('Reply'),
+                child: const Text(
+                  'Reply',
+                  selectionColor: AppColors.spaceCadet,
+                  ),
               ),
             ),
 
