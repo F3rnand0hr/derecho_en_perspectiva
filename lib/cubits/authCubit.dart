@@ -9,7 +9,6 @@ class AuthCubit extends Cubit<User?> {
     _checkUserStatus();
   }
 
-  // Check and listen for auth state changes
   void _checkUserStatus() {
     _authService.authStateChanges.listen((user) {
       emit(user); // Emit user whenever auth state changes

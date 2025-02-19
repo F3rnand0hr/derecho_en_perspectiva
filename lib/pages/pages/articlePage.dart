@@ -32,6 +32,9 @@ class _ArticlePageState extends State<ArticlePage> {
             .doc(widget.articleId)
             .snapshots(),
         builder: (context, snapshot) {
+          
+          final articleUrl = 'https://derecho-en-perspectiva.web.app/#/article/${widget.articleId}';
+
           if (!snapshot.hasData) {
             return Scaffold(
               appBar: AppBar(
@@ -132,7 +135,7 @@ class _ArticlePageState extends State<ArticlePage> {
                           final data = articleSnap.data() as Map<String, dynamic>;
                           final title = data['title'] ?? '';
                           final description = data['description'] ?? '';
-                          Share.share('Check out this article:\n$title\n\n$description');
+                          Share.share('Check out this article:\n$title\n\n$description\nRead more: $articleUrl');
                         }
                       },
                     ),

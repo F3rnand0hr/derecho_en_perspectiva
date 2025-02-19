@@ -7,17 +7,22 @@ import 'package:go_router/go_router.dart';
 
 import '../pages/pages/signUpPage.dart';
 
-final GoRouter router = GoRouter(routes:[
-  GoRoute(name: 'home',
-  path: "/",
-    builder: (context,state) => homePage(),
-  ),
+final GoRouter router = 
 
-  GoRoute(
-    name: 'sign_up',
-    path: '/sign-up',
-    builder: (context, state) => SignUpPage(),
-  ),
+GoRouter(
+  routes:
+  [
+    GoRoute(
+      name: 'home',
+      path: "/",
+      builder: (context,state) => homePage(),
+    ),
+
+    GoRoute(
+      name: 'sign_up',
+      path: '/sign-up',
+      builder: (context, state) => SignUpPage(),
+    ),
 
     GoRoute(
       name: 'articlesList',
@@ -46,7 +51,8 @@ final GoRouter router = GoRouter(routes:[
       path: '/userPage',
       builder: (context, state) => UserPage(),
     )
-]);
+  ]
+);
 
 
 

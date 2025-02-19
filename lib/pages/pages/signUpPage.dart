@@ -1,3 +1,4 @@
+import 'dart:html' as html;
 import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -150,7 +151,8 @@ class _SignUpPageState extends State<SignUpPage> {
         await user.reload();
 
         showToast(message: "Usuario creado");
-        context.go('/'); // Navigate to home page
+        html.window.location.reload();
+        // context.go('/'); // Navigate to home page
       }
     } catch (e) {
       showToast(message: "Error: $e");
