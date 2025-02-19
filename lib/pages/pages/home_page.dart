@@ -161,10 +161,10 @@ class _homePageState extends State<homePage> {
                           children: [
                             // Adjusted Icon for Business Law with larger size
                             buildSectionItem('Business Law', Icons.business, AppColors.slateGray),
-                            SizedBox(width: 50), // Increased spacing between icons
+                            SizedBox(width: 20), // Increased spacing between icons
                             // Adjusted Icon for Criminal Law with larger size
                             buildSectionItem('Criminal Law', Icons.gavel, AppColors.slateGray),
-                            SizedBox(width: 50), // Increased spacing between icons
+                            SizedBox(width: 20), // Increased spacing between icons
                             // Adjusted Icon for Family Law with larger size
                             buildSectionItem('Family Law', Icons.family_restroom, AppColors.slateGray),
                           ],
