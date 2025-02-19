@@ -131,6 +131,7 @@ class _homePageState extends State<homePage> {
                     ),
                   ),
                   Container(
+                    height: deviceHeight(context)*0.75,
                     width: deviceWidth(context)*0.70,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -195,7 +196,7 @@ class _homePageState extends State<homePage> {
                     ),
                   ),
                   Container(
-                    width: deviceWidth(context)*0.80,
+                    width: deviceWidth(context)*0.85,
                     color: Colors.white, // Background color for the content below the image
                     height: deviceHeight(context),
                     child: ListView.builder(
@@ -213,6 +214,7 @@ class _homePageState extends State<homePage> {
                           ),
                           child: ListTile(
                             title: Text(
+                              textAlign: TextAlign.center,
                               '¡Volumen mas reciente!',
                               style: TextStyle(
                                 fontSize: 36,
@@ -220,6 +222,7 @@ class _homePageState extends State<homePage> {
                               ),
                             ),
                             subtitle: Text(
+                              textAlign: TextAlign.center,
                               'Description for item $index',
                               style: TextStyle(
                                 color: Colors.white,
