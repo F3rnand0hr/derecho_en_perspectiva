@@ -1,0 +1,24 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "A new Flutter project.",
+  "homepage": "https://github.com/F3rnand0hr/derecho_en_perspectiva#readme",
+  "bugs": {
+    "url": "https://github.com/F3rnand0hr/derecho_en_perspectiva/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/F3rnand0hr/derecho_en_perspectiva.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
