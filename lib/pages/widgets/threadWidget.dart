@@ -1,31 +1,33 @@
-import 'package:derecho_en_perspectiva/cubits/authCubit.dart';
-import 'package:derecho_en_perspectiva/styles/colors.dart';
+// thread_widget.dart
+import 'package:derecho_en_perspectiva/data/models/comments/replyModel.dart';
+import 'package:derecho_en_perspectiva/services/newCommentInput.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:derecho_en_perspectiva/cubits/authCubit.dart';
+import 'package:derecho_en_perspectiva/styles/colors.dart';
+import 'package:derecho_en_perspectiva/data/models/comments/commentModel.dart';
+import 'package:derecho_en_perspectiva/services/replyRepo.dart';
+import 'package:derecho_en_perspectiva/repositories/comments/addReply.dart';
 
 class ThreadWidget extends StatefulWidget {
-  final String articleId;   // ID of the parent article
-  final String docId;       // Firestore doc ID of this comment/reply
+  final String articleId; // ID of the parent article
+  final String docId; // Firestore doc ID of this comment/reply
   final String userId;
   final String userName;
   final String text;
   final Timestamp? timestamp;
-
-  // The path to this doc's "replies" subcollection:
-  //   e.g. "articulos/{articleId}/comments/{docId}/replies"
-  // If this is a reply to a reply, the path might be nested further.
   final CollectionReference<Map<String, dynamic>> repliesCollection;
 
   const ThreadWidget({
     Key? key,
+    required this.repliesCollection,
     required this.articleId,
     required this.docId,
     required this.userId,
     required this.userName,
     required this.text,
-    required this.timestamp,
-    required this.repliesCollection,
+    this.timestamp,
   }) : super(key: key);
 
   @override
@@ -33,6 +35,7 @@ class ThreadWidget extends StatefulWidget {
 }
 
 class _ThreadWidgetState extends State<ThreadWidget> {
+  final ThreadRepository _threadRepo = ThreadRepository();
   bool _showReplyField = false;
 
   @override
@@ -53,8 +56,8 @@ class _ThreadWidgetState extends State<ThreadWidget> {
                   widget.userName,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.spaceCadet
-                    ),
+                    color: AppColors.spaceCadet,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -66,16 +69,15 @@ class _ThreadWidgetState extends State<ThreadWidget> {
               ],
             ),
             const SizedBox(height: 4),
-
             // MAIN COMMENT TEXT
             Text(widget.text),
-
             // REPLY BUTTON
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
                 style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all(AppColors.spaceCadet), // Set the text color here
+                  foregroundColor:
+                      MaterialStateProperty.all(AppColors.spaceCadet),
                 ),
                 onPressed: () {
                   setState(() {
@@ -85,51 +87,41 @@ class _ThreadWidgetState extends State<ThreadWidget> {
                 child: const Text(
                   'Reply',
                   selectionColor: AppColors.spaceCadet,
-                  ),
+                ),
               ),
             ),
-
             // REPLY INPUT
             if (_showReplyField)
-              _ReplyInput(
+              ReplyInput(
                 repliesCollection: widget.repliesCollection,
               ),
-
-            // LIST OF CHILD REPLIES
-            // Build a StreamBuilder to load any docs in this doc's "replies" subcollection
-            StreamBuilder<QuerySnapshot>(
-              stream: widget.repliesCollection
-                  .orderBy('timestamp', descending: false)
-                  .snapshots(),
+            // LIST OF CHILD REPLIES using a StreamBuilder
+            StreamBuilder<List<Reply>>(
+              stream: _threadRepo.getRepliesStream(widget.repliesCollection),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const SizedBox.shrink();
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 }
-                final replyDocs = snapshot.data!.docs;
-
-                // For each child doc, we create another ThreadWidget
-                // Note that each child doc can have a subcollection named "replies" as well.
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const SizedBox();
+                }
+                final replies = snapshot.data!;
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: replyDocs.length,
+                  itemCount: replies.length,
                   itemBuilder: (context, index) {
-                    final replyDoc = replyDocs[index];
-                    final replyData =
-                        replyDoc.data() as Map<String, dynamic>;
-
+                    final reply = replies[index];
                     return ThreadWidget(
                       articleId: widget.articleId,
-                      docId: replyDoc.id,
-                      userId: replyData['userId'] ?? '',
-                      userName: replyData['userName'] ?? '',
-                      text: replyData['text'] ?? '',
-                      timestamp: replyData['timestamp'] as Timestamp?,
-                      // For the next level, note the path:
-                      //  "articulos / {articleId} / comments / {commentId} / replies / {thisReplyId} / replies"
-                      // We just keep nesting "replies" subcollections:
+                      docId: reply.id,
+                      userId: reply.userId,
+                      userName: reply.userName,
+                      text: reply.text,
+                      timestamp: widget.timestamp, // or convert reply.timestamp if needed
+                      // Nest the next level's replies subcollection:
                       repliesCollection: widget.repliesCollection
-                          .doc(replyDoc.id)
+                          .doc(reply.id)
                           .collection('replies'),
                     );
                   },
@@ -139,68 +131,6 @@ class _ThreadWidgetState extends State<ThreadWidget> {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// A small widget to handle input for posting a new reply to the current doc's "replies" subcollection.
-class _ReplyInput extends StatefulWidget {
-  final CollectionReference<Map<String, dynamic>> repliesCollection;
-
-  const _ReplyInput({Key? key, required this.repliesCollection}) : super(key: key);
-
-  @override
-  State<_ReplyInput> createState() => _ReplyInputState();
-}
-
-class _ReplyInputState extends State<_ReplyInput> {
-  final TextEditingController _replyController = TextEditingController();
-  bool _isPosting = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final user = context.watch<AuthCubit>().state; // Get current user
-    final userId = user?.uid; // Use user.uid for unique user identifier
-    final userName = user?.displayName;
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: _replyController,
-            decoration: const InputDecoration(
-              hintText: 'Write a reply...',
-            ),
-          ),
-        ),
-        IconButton(
-          icon: _isPosting
-              ? const CircularProgressIndicator()
-              : const Icon(Icons.send),
-          onPressed: _isPosting
-              ? null
-              : () async {
-                  final text = _replyController.text.trim();
-                  if (text.isEmpty) return;
-
-                  setState(() => _isPosting = true);
-
-                  try {
-                    // Add a new doc in the current doc's "replies" subcollection
-                    await widget.repliesCollection.add({
-                      'userId': userId,   // Replace with real user info
-                      'userName': userName,
-                      'text': text,
-                      'timestamp': FieldValue.serverTimestamp(),
-                    });
-                    _replyController.clear();
-                  } catch (e) {
-                    debugPrint('Error posting reply: $e');
-                  }
-
-                  setState(() => _isPosting = false);
-                },
-        ),
-      ],
     );
   }
 }

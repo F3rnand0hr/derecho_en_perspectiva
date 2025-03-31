@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:derecho_en_perspectiva/user_auth/firebase_auth_implementation/firebase_auth_services.dart'; // Ensure this is imported
+import 'package:derecho_en_perspectiva/repositories/user_auth/firebase_auth_implementation/firebase_auth_services.dart'; // Ensure this is imported
 import 'package:derecho_en_perspectiva/cubits/authCubit.dart'; // Ensure AuthCubit is imported
 
 Widget appDrawer(BuildContext context) {

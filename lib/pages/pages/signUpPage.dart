@@ -1,11 +1,11 @@
 import 'dart:html' as html;
-import 'package:derecho_en_perspectiva/data_source/device_info/device_height.dart';
+import 'package:derecho_en_perspectiva/data/data_source/device_info/device_height.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
 import 'package:derecho_en_perspectiva/styles/toast.dart';
-import 'package:derecho_en_perspectiva/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
+import 'package:derecho_en_perspectiva/repositories/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/formContainerWidget.dart';
 

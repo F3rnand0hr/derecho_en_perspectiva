@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:derecho_en_perspectiva/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
+import 'package:derecho_en_perspectiva/repositories/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
 
 class AuthCubit extends Cubit<User?> {
   final FirebaseAuthService _authService;

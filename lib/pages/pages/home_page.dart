@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/buildSectionItem.dart';
-import 'package:derecho_en_perspectiva/data_source/device_info/device_height.dart';
+import 'package:derecho_en_perspectiva/data/data_source/device_info/device_height.dart';
 import 'package:derecho_en_perspectiva/cubits/authCubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -119,6 +119,7 @@ class _homePageState extends State<homePage> {
                             'Derecho En Perspectiva',
                             textAlign: TextAlign.center,
                             style: TextStyle(
+                              fontFamily: 'Georgia',
                               fontSize: 36,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
