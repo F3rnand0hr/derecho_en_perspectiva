@@ -1,5 +1,6 @@
 import 'package:derecho_en_perspectiva/data/models/articleModel.dart';
 import 'package:derecho_en_perspectiva/data/models/comments/commentModel.dart';
+import 'package:derecho_en_perspectiva/repositories/articles/articleLike.dart';
 import 'package:derecho_en_perspectiva/repositories/articles/articlesRepository.dart';
 import 'package:derecho_en_perspectiva/repositories/comments/commentsRepo.dart';
 import 'package:derecho_en_perspectiva/services/newCommentInput.dart';
@@ -11,6 +12,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/threadWidget.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
 import 'package:derecho_en_perspectiva/cubits/authCubit.dart';
+import 'package:derecho_en_perspectiva/repositories/articles/articleLoader.dart';
 
 class ArticlePage extends StatefulWidget {
   final String articleId;
@@ -55,33 +57,14 @@ class _ArticlePageState extends State<ArticlePage> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Article?>(
-      stream: _articleRepository.getArticleStream(widget.articleId),
-      builder: (context, snapshot) {
-        final articleUrl =
-            'https://derecho-en-perspectiva.web.app/#/article/${widget.articleId}';
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Loading...')),
-            body: const Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        if (!snapshot.hasData || snapshot.data == null) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Article Not Found')),
-            body: const Center(child: Text('Article not found')),
-          );
-        }
-
-        final article = snapshot.data!;
+    return ArticleLoader(
+      articleId: widget.articleId,
+      builder: (context, article) {
         final title = article.title;
         final description = article.description;
         final content = article.content;
         final imageURL = article.imageURL;
         final liked = article.liked;
-
         return Scaffold(
           appBar: AppBar(
             title: Text(title.isNotEmpty ? title : 'Article Detail'),
@@ -98,104 +81,24 @@ class _ArticlePageState extends State<ArticlePage> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    IconButton(
-                      icon: Icon(
-                        liked.contains(context.read<AuthCubit>().state?.uid)
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        color: liked.contains(context.read<AuthCubit>().state?.uid)
-                            ? Colors.red
-                            : AppColors.spaceCadet,
-                      ),
-                      onPressed: context.read<AuthCubit>().state == null
-                          ? null
-                          : () async {
-                              if (liked.contains(context.read<AuthCubit>().state?.uid)) {
-                                await _articleRepository.unlikeArticle(
-                                  widget.articleId,
-                                  context.read<AuthCubit>().state!.uid,
-                                );
-                              } else {
-                                await _articleRepository.likeArticle(
-                                  widget.articleId,
-                                  context.read<AuthCubit>().state!.uid,
-                                );
-                              }
-                            },
-                    ),
+                    LikeButton(articleId: widget.articleId),
                     Text('${liked.length}'),
                     const SizedBox(width: 8),
-                    IconButton(
-                      icon: Icon(
-                        _commentsVisible ? Icons.chat_bubble : Icons.chat_bubble_outline,
-                        color: AppColors.spaceCadet,
-                      ),
-                      onPressed: () {
+                    commentsIcon(
+                      _commentsVisible,
+                      () {
                         setState(() {
                           _commentsVisible = !_commentsVisible;
                         });
                       },
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.share, color: AppColors.spaceCadet),
-                      onPressed: () {
-                        Share.share(
-                          'Check out this article:\n'
-                          '$title\n\n'
-                          '$description\n'
-                          'Read more: $articleUrl',
-                        );
-                      },
-                    ),
+                    shareButton(title, description, widget.articleId),
                   ],
                 ),
-                if (_commentsVisible) ...[
-                  NewCommentInput(
-                    onSubmit: _handleCommentSubmit,
-                    isPosting: _isPosting,
-                  ),
-                  const SizedBox(height: 16),
-                  // Stream top-level comments using the CommentsRepository
-                  StreamBuilder<List<Comment>>(
-                    stream: _commentsRepository.getCommentsForArticle(widget.articleId),
-                    builder: (context, commentSnapshot) {
-                      if (commentSnapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (!commentSnapshot.hasData || commentSnapshot.data!.isEmpty) {
-                        return const Text('No comments yet. Be the first to comment!');
-                      }
-                      final comments = commentSnapshot.data!;
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: comments.length,
-                        itemBuilder: (context, index) {
-                          final comment = comments[index];
-                          return ThreadWidget(
-                            articleId: widget.articleId,
-                            docId: comment.id,
-                            userId: comment.userId,
-                            userName: comment.userName,
-                            text: comment.text,
-                            timestamp: comment.timestamp != null
-                                ? Timestamp.fromDate(comment.timestamp!)
-                                : null,
-                            // Pass the replies subcollection for this comment
-                            repliesCollection: FirebaseFirestore.instance
-                                .collection('articulos')
-                                .doc(widget.articleId)
-                                .collection('comments')
-                                .doc(comment.id)
-                                .collection('replies'),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
+                commentList(commentsVisible: _commentsVisible, onSubmit: _handleCommentSubmit, isPosting: _isPosting, commentStream: _commentsRepository.getCommentsForArticle(widget.articleId), articleId: widget.articleId),
                 const SizedBox(height: 8),
-                Text(description, style: const TextStyle(fontSize: 16, color: Colors.grey)),
+                Text(description,
+                    style: const TextStyle(fontSize: 16, color: Colors.grey)),
                 const SizedBox(height: 16),
                 Text(content, style: const TextStyle(fontSize: 16)),
               ],
@@ -205,4 +108,89 @@ class _ArticlePageState extends State<ArticlePage> {
       },
     );
   }
+}
+
+
+Widget commentsIcon(bool _commentsVisible, VoidCallback onToggleComments) {
+  return IconButton(
+    icon: Icon(
+      _commentsVisible ? Icons.chat_bubble : Icons.chat_bubble_outline,
+      color: AppColors.spaceCadet,
+    ),
+    onPressed: onToggleComments,
+  );
+}
+
+Widget shareButton(String title, String description, String articleId) {
+  final articleUrl =
+            'https://derecho-en-perspectiva.web.app/#/article/${articleId}';
+
+  return IconButton(
+    icon:
+        const Icon(Icons.share, color: AppColors.spaceCadet),
+    onPressed: () {
+      Share.share(
+        'Check out this article:\n'
+        '$title\n\n'
+        '$description\n'
+        'Read more: $articleUrl',
+      );
+    },
+  );
+}
+
+Widget commentList({
+  required bool commentsVisible,
+  required Future<void> Function(String) onSubmit,
+  required bool isPosting,
+  required Stream<List<Comment>> commentStream,
+  required String articleId,
+}) {
+  if (!commentsVisible) return const SizedBox.shrink();
+
+  return Column(
+    children: [
+      NewCommentInput(
+        onSubmit: onSubmit,
+        isPosting: isPosting,
+      ),
+      const SizedBox(height: 16),
+      StreamBuilder<List<Comment>>(
+        stream: commentStream,
+        builder: (context, commentSnapshot) {
+          if (commentSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (!commentSnapshot.hasData || commentSnapshot.data!.isEmpty) {
+            return const Text('No comments yet. Be the first to comment!');
+          }
+          final comments = commentSnapshot.data!;
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: comments.length,
+            itemBuilder: (context, index) {
+              final comment = comments[index];
+              return ThreadWidget(
+                articleId: articleId,
+                docId: comment.id,
+                userId: comment.userId,
+                userName: comment.userName,
+                text: comment.text,
+                timestamp: comment.timestamp != null
+                    ? Timestamp.fromDate(comment.timestamp!)
+                    : null,
+                repliesCollection: FirebaseFirestore.instance
+                    .collection('articulos')
+                    .doc(articleId)
+                    .collection('comments')
+                    .doc(comment.id)
+                    .collection('replies'),
+              );
+            },
+          );
+        },
+      ),
+    ],
+  );
 }
