@@ -94,7 +94,7 @@ class _homePageState extends State<homePage> {
                     height: deviceHeight(context), // Adjust this height to control the size of the image section
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/law_backround.jpeg'),
+                        image: AssetImage('assets/photos/law_backround.jpeg'),
                         fit: BoxFit.cover,
                       ),
                     ),

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:derecho_en_perspectiva/repositories/user_auth/firebase_auth_implementation/firebase_auth_services.dart'; // Ensure this is imported
 import 'package:derecho_en_perspectiva/cubits/authCubit.dart'; // Ensure AuthCubit is imported
 
 Widget appDrawer(BuildContext context) {
@@ -48,7 +46,7 @@ Widget appDrawer(BuildContext context) {
           ),
           title: const Text('R E V I S T A S'),
           onTap: (){
-            
+            context.push('/magazinePage'); // Navigate to magazines
           },
         ),
 

@@ -5,7 +5,6 @@ import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
-import 'package:derecho_en_perspectiva/pages/pages/signUpPage.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/formContainerWidget.dart';
 import 'package:derecho_en_perspectiva/styles/toast.dart';
 import 'package:derecho_en_perspectiva/repositories/user_auth/firebase_auth_implementation/firebase_auth_services.dart';
@@ -22,7 +21,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isSigning = false;
   final FirebaseAuthService _auth = FirebaseAuthService();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 

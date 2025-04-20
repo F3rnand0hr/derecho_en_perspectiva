@@ -1,7 +1,5 @@
-import 'package:derecho_en_perspectiva/data/models/articleModel.dart';
 import 'package:derecho_en_perspectiva/data/models/comments/commentModel.dart';
 import 'package:derecho_en_perspectiva/repositories/articles/articleLike.dart';
-import 'package:derecho_en_perspectiva/repositories/articles/articlesRepository.dart';
 import 'package:derecho_en_perspectiva/repositories/comments/commentsRepo.dart';
 import 'package:derecho_en_perspectiva/services/newCommentInput.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
@@ -23,7 +21,6 @@ class ArticlePage extends StatefulWidget {
 }
 
 class _ArticlePageState extends State<ArticlePage> {
-  final _articleRepository = ArticleRepository();
   final _commentsRepository = CommentsRepository();
 
   bool _commentsVisible = false;

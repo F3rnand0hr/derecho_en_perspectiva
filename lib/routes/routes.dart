@@ -2,6 +2,7 @@ import 'package:derecho_en_perspectiva/pages/pages/articleListPage.dart';
 import 'package:derecho_en_perspectiva/pages/pages/articlePage.dart';
 import 'package:derecho_en_perspectiva/pages/pages/home_page.dart';
 import 'package:derecho_en_perspectiva/pages/pages/logInPage.dart';
+import 'package:derecho_en_perspectiva/pages/pages/magazinePage.dart';
 import 'package:derecho_en_perspectiva/pages/pages/userPage.dart';
 import 'package:go_router/go_router.dart';
 
@@ -47,7 +48,13 @@ GoRouter(
       name: 'userPage',
       path: '/userPage',
       builder: (context, state) => UserPage(),
-    )
+    ),
+
+    GoRoute(
+      name: 'magazinePage',
+      path: '/magazinePage',
+      builder: (context, state) => const MagazinePage(),
+    ),
   ]
 );
 
