@@ -7,7 +7,7 @@ import 'package:derecho_en_perspectiva/styles/colors.dart';
 import 'package:derecho_en_perspectiva/cubits/leafCubit.dart';
 
 class MagazinePage extends StatefulWidget {
-  const MagazinePage({Key? key}) : super(key: key);
+  const MagazinePage({super.key});
 
   @override
   State<MagazinePage> createState() => _MagazinePageState();
@@ -104,10 +104,9 @@ class _MagazinePageState extends State<MagazinePage> {
                               document: document,
                               pageNumber: left,
                               decoration: BoxDecoration(
-        color: Colors.white,         // ensure clean white page
-        boxShadow: [],               // *no* shadows
-        border: Border.all(color: Colors.transparent),
-      ),
+                                color: Colors.white, // ensure clean white page
+                                border: Border.all(color: Colors.transparent),
+                              ),
                             ),
                             const SizedBox(width: 8),
                             right <= totalPages
@@ -115,10 +114,11 @@ class _MagazinePageState extends State<MagazinePage> {
                                     document: document,
                                     pageNumber: right,
                                     decoration: BoxDecoration(
-        color: Colors.white,         // ensure clean white page
-        boxShadow: [],               // *no* shadows
-        border: Border.all(color: Colors.transparent),
-      ),
+                                      color: Colors
+                                          .white, // ensure clean white page
+                                      border:
+                                          Border.all(color: Colors.transparent),
+                                    ),
                                   )
                                 : const SizedBox.shrink(),
                           ],
