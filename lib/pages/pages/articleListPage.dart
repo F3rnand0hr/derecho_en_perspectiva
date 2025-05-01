@@ -2,7 +2,7 @@ import 'package:derecho_en_perspectiva/repositories/articles/articlesRepository.
 import 'package:flutter/material.dart';
 
 class ArticleListPage extends StatefulWidget {
-  const ArticleListPage({Key? key}) : super(key: key);
+  const ArticleListPage({super.key});
 
   @override
   State<ArticleListPage> createState() => _ArticleListPageState();

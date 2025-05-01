@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:derecho_en_perspectiva/pages/widgets/appBar.dart';
 import 'package:flutter/material.dart';
 import 'package:derecho_en_perspectiva/pages/widgets/appDrawer.dart';
 import 'package:derecho_en_perspectiva/styles/colors.dart';
@@ -48,24 +49,7 @@ class _homePageState extends State<homePage> {
     final user = context.watch<AuthCubit>().state;
     return Scaffold(
       extendBodyBehindAppBar: true, // Allows the body to extend behind the AppBar
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0, // Remove shadow
-        iconTheme: IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.account_circle),
-            onPressed: () {
-              if (user != null){
-                context.push('/userPage');
-              }
-              else{
-                context.push('/sign-up');
-              }
-            },
-          ),
-        ],
-      ),
+      appBar: appBar(context),
       drawer: appDrawer(context),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
@@ -108,10 +92,11 @@ class _homePageState extends State<homePage> {
                             'Bienvenid@s!',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Colors.white70,
                               letterSpacing: 1.5,
+                              fontFamily: 'Times New Roman',
                             ),
                           ),
             
@@ -120,7 +105,7 @@ class _homePageState extends State<homePage> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontFamily: 'Georgia',
-                              fontSize: 36,
+                              fontSize: 52,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               letterSpacing: 1.5,
@@ -131,7 +116,7 @@ class _homePageState extends State<homePage> {
                       ),
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: deviceHeight(context)*0.75,
                     width: deviceWidth(context)*0.70,
                     child: Padding(

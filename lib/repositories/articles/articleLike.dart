@@ -8,7 +8,7 @@ import 'package:derecho_en_perspectiva/repositories/articles/articleLoader.dart'
 class LikeButton extends StatelessWidget {
   final String articleId;
 
-  const LikeButton({Key? key, required this.articleId}) : super(key: key);
+  const LikeButton({super.key, required this.articleId});
 
   @override
   Widget build(BuildContext context) {

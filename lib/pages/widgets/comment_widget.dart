@@ -15,14 +15,14 @@ class CommentWidget extends StatefulWidget {
   final Timestamp? timestamp;
 
   const CommentWidget({
-    Key? key,
+    super.key,
     required this.articleId,
     required this.commentId,
     required this.userId,
     required this.userName,
     required this.text,
     required this.timestamp,
-  }) : super(key: key);
+  });
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -100,10 +100,10 @@ class RepliesList extends StatelessWidget {
   final String commentId;
 
   const RepliesList({
-    Key? key,
+    super.key,
     required this.articleId,
     required this.commentId,
-  }) : super(key: key);
+  });
 
    @override
   Widget build(BuildContext context) {
@@ -169,10 +169,10 @@ class _NewReplyInput extends StatefulWidget {
   final String commentId;
 
   const _NewReplyInput({
-    Key? key,
+    super.key,
     required this.articleId,
     required this.commentId,
-  }) : super(key: key);
+  });
 
   @override
   State<_NewReplyInput> createState() => _NewReplyInputState();

@@ -7,10 +7,10 @@ class ArticleLoader extends StatelessWidget {
   final Widget Function(BuildContext context, Article article) builder;
 
   const ArticleLoader({
-    Key? key,
+    super.key,
     required this.articleId,
     required this.builder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -9,7 +9,7 @@ import 'package:derecho_en_perspectiva/services/replyRepo.dart';
 
 class ReplyInput extends StatefulWidget {
   final CollectionReference<Map<String, dynamic>> repliesCollection;
-  const ReplyInput({Key? key, required this.repliesCollection}) : super(key: key);
+  const ReplyInput({super.key, required this.repliesCollection});
 
   @override
   State<ReplyInput> createState() => _ReplyInputState();

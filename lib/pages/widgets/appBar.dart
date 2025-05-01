@@ -10,7 +10,10 @@ PreferredSizeWidget appBar(BuildContext context, ) {
     child: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0, // Remove shadow
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(
+            color: const Color.fromARGB(255, 168, 167, 167),
+            size: 50
+            ),
           actions: [
             IconButton(
               icon: Icon(Icons.account_circle),
@@ -24,6 +27,11 @@ PreferredSizeWidget appBar(BuildContext context, ) {
               },
             ),
           ],
+          title: Image.asset(
+            'assets/photos/pre-law-logo.png',
+            height: 60,
+            width: 60,
+            ),
         ),
   );
 }

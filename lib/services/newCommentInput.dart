@@ -8,10 +8,10 @@ class NewCommentInput extends StatefulWidget {
   final bool isPosting; // if you need a loading indicator
 
   const NewCommentInput({
-    Key? key,
+    super.key,
     required this.onSubmit,
     this.isPosting = false,
-  }) : super(key: key);
+  });
 
   @override
   State<NewCommentInput> createState() => _NewCommentInputState();

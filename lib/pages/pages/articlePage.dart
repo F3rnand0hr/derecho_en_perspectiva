@@ -108,10 +108,10 @@ class _ArticlePageState extends State<ArticlePage> {
 }
 
 
-Widget commentsIcon(bool _commentsVisible, VoidCallback onToggleComments) {
+Widget commentsIcon(bool commentsVisible, VoidCallback onToggleComments) {
   return IconButton(
     icon: Icon(
-      _commentsVisible ? Icons.chat_bubble : Icons.chat_bubble_outline,
+      commentsVisible ? Icons.chat_bubble : Icons.chat_bubble_outline,
       color: AppColors.spaceCadet,
     ),
     onPressed: onToggleComments,
@@ -120,7 +120,7 @@ Widget commentsIcon(bool _commentsVisible, VoidCallback onToggleComments) {
 
 Widget shareButton(String title, String description, String articleId) {
   final articleUrl =
-            'https://derecho-en-perspectiva.web.app/#/article/${articleId}';
+            'https://derecho-en-perspectiva.web.app/#/article/$articleId';
 
   return IconButton(
     icon:

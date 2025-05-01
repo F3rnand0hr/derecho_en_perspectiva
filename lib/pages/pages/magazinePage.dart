@@ -62,114 +62,151 @@ class _MagazinePageState extends State<MagazinePage> {
 
           return Scaffold(
             appBar: appBar(context),
-            backgroundColor: AppColors.tan,
-            body: Stack(
+            backgroundColor: AppColors.creamBeige,
+            body: Column(
               children: [
-                // ── Your Flipbook ──────────────────────────────────
-                // ── Progress Bar AT THE TOP ─────────────────────
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: BlocBuilder<LeafCubit, LeafState>(
-                    builder: (_, state) {
-                      return LinearProgressIndicator(
-                        value: (state.currentLeaf + 1) / state.totalLeaves,
-                        backgroundColor: Colors.white24,
-                        color: AppColors.caputMortuum,
-                        minHeight: 6,
-                      );
-                    },
+                // — Progress bar at the very top —
+                BlocBuilder<LeafCubit, LeafState>(
+                  builder: (_, state) => LinearProgressIndicator(
+                    value: (state.currentLeaf + 1) / state.totalLeaves,
+                    backgroundColor: Colors.white24,
+                    color: AppColors.caputMortuum,
+                    minHeight: 6,
                   ),
                 ),
-                Positioned.fill(
-                  child: TurnPageView.builder(
-                    controller: _flipCtrl,
-                    itemCount: leafCount,
-                    itemBuilder: (ctx, leafIndex) {
-                      final left = leafIndex * 2 + 1;
-                      final right = left + 1;
 
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 20,
-                        ),
-                        child: Row(
-                          // crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            PdfPageView(
-                              document: document,
-                              pageNumber: left,
-                              decoration: BoxDecoration(
-                                color: Colors.white, // ensure clean white page
-                                border: Border.all(color: Colors.transparent),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            right <= totalPages
-                                ? PdfPageView(
-                                    document: document,
-                                    pageNumber: right,
-                                    decoration: BoxDecoration(
-                                      color: Colors
-                                          .white, // ensure clean white page
-                                      border:
-                                          Border.all(color: Colors.transparent),
+                // — Flipbook takes the rest of the screen —
+              
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        // 1) The TurnPageView in a bounded container:
+                        Positioned.fill(
+                          child: TurnPageView.builder(
+                            controller: _flipCtrl,
+                            itemCount: leafCount,
+                            itemBuilder: (ctx, leafIndex) {
+                              // detect screen width
+                              final screenW = MediaQuery.of(context).size.width;
+                              final isNarrow = screenW < 890;
+                              final viewCount = isNarrow ? totalPages : leafCount;
+                  
+                              // single‑page for narrow
+                              if (isNarrow) {
+                                final pageNum = leafIndex + 1;
+                                final ref = document.pages[pageNum - 1];
+                  
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 20),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 100,
+                                      ),
+                                      AspectRatio(
+                                        aspectRatio: ref.width / ref.height,
+                                        child: PdfPageView(
+                                          document: document,
+                                          pageNumber: pageNum,
+                                          decoration: BoxDecoration(
+                                            color: Colors
+                                                .white, // ensure clean white page
+                                            border: Border.all(
+                                                color: Colors.transparent),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                              final left = leafIndex * 2 + 1;
+                              final right = left + 1;
+                              // grab your PdfPageRefs for aspect ratio
+                              final leftRef = document.pages[left - 1];
+                              final rightRef = right <= totalPages
+                                  ? document.pages[right - 1]
+                                  : null;
+                  
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 20,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    AspectRatio(
+                                      aspectRatio: leftRef.width / leftRef.height,
+                                      child: PdfPageView(
+                                        document: document,
+                                        pageNumber: left,
+                                        decoration: BoxDecoration(
+                                          color: Colors
+                                              .white, // ensure clean white page
+                                          border: Border.all(
+                                              color: Colors.black),
+                                        ),
+                                      ),
                                     ),
-                                  )
-                                : const SizedBox.shrink(),
-                          ],
+                                    const SizedBox(width: 8),
+                                    if (rightRef != null)
+                                      AspectRatio(
+                                        aspectRatio:
+                                            rightRef.width / rightRef.height,
+                                        child: PdfPageView(
+                                          document: document,
+                                          pageNumber: right,
+                                          decoration: BoxDecoration(
+                                            color: Colors
+                                                .white, // ensure clean white page
+                                            border: Border.all(
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            },
+                            overleafColorBuilder: (_) => Colors.white,
+                          ),
                         ),
-                      );
-                    },
-                    overleafColorBuilder: (_) => Colors.white,
-                  ),
-                ),
-
-                // ── Prev Button on Left Edge ──────────────────────
-                // 2) PREV BUTTON: left‑center
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: FloatingActionButton(
-                      heroTag: 'prev',
-                      mini: true,
-                      child: const Icon(Icons.chevron_left),
-                      onPressed: () {
-                        final prev = (_flipCtrl.currentIndex - 1)
-                            .clamp(0, leafCount - 1);
-                        _flipCtrl.jumpToPage(prev);
-                        _leafCubit.setLeaf(prev);
-                      },
+                  
+                        // 2) Prev button on the left
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            icon: const Icon(Icons.chevron_left),
+                            color: AppColors.caputMortuum,
+                            onPressed: () {
+                              final prev = (_flipCtrl.currentIndex - 1)
+                                  .clamp(0, leafCount - 1);
+                              _flipCtrl.jumpToPage(prev);
+                              _leafCubit.setLeaf(prev);
+                            },
+                          ),
+                        ),
+                  
+                        // 3) Next button on the right
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.chevron_right),
+                            color: AppColors.caputMortuum,
+                            onPressed: () {
+                              final next = (_flipCtrl.currentIndex + 1)
+                                  .clamp(0, leafCount - 1);
+                              _flipCtrl.jumpToPage(next);
+                              _leafCubit.setLeaf(next);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-
-                // ── Next Button on Right Edge ─────────────────────
-                // 3) NEXT BUTTON: right‑center
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: FloatingActionButton(
-                      heroTag: 'next',
-                      mini: true,
-                      child: const Icon(Icons.chevron_right),
-                      onPressed: () {
-                        final next = (_flipCtrl.currentIndex + 1)
-                            .clamp(0, leafCount - 1);
-                        _flipCtrl.jumpToPage(next);
-                        _leafCubit.setLeaf(next);
-                      },
-                    ),
-                  ),
-                ),
               ],
             ),
           );

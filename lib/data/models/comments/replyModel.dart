@@ -1,5 +1,4 @@
 // lib/models/reply_model.dart
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Reply {
   final String articleId;   // ID of the parent article

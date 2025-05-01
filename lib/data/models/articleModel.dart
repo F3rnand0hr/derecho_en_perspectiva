@@ -1,5 +1,4 @@
 // lib/models/article_model.dart
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Article {
   final String id;

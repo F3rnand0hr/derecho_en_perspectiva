@@ -20,7 +20,7 @@ class ThreadWidget extends StatefulWidget {
   final CollectionReference<Map<String, dynamic>> repliesCollection;
 
   const ThreadWidget({
-    Key? key,
+    super.key,
     required this.repliesCollection,
     required this.articleId,
     required this.docId,
@@ -28,7 +28,7 @@ class ThreadWidget extends StatefulWidget {
     required this.userName,
     required this.text,
     this.timestamp,
-  }) : super(key: key);
+  });
 
   @override
   State<ThreadWidget> createState() => _ThreadWidgetState();
@@ -77,7 +77,7 @@ class _ThreadWidgetState extends State<ThreadWidget> {
               child: TextButton(
                 style: ButtonStyle(
                   foregroundColor:
-                      MaterialStateProperty.all(AppColors.spaceCadet),
+                      WidgetStateProperty.all(AppColors.spaceCadet),
                 ),
                 onPressed: () {
                   setState(() {
