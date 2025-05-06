@@ -4,6 +4,7 @@ import 'package:derecho_en_perspectiva/repositories/user_auth/firebase_auth_impl
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sizer/sizer.dart';
 import 'app.dart';
 
 Future<void> main() async {
@@ -17,7 +18,10 @@ Future<void> main() async {
   runApp(
     BlocProvider(
       create: (context) => AuthCubit(authService),
-      child: MyApp(),
+      child: Sizer(
+        builder: (context, orientation, deviceType) {
+          return MyApp();
+        },),
     ),
   );
 }
